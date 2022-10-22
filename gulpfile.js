@@ -10,6 +10,7 @@ const imagemin = require("gulp-imagemin");
 const htmlmin = require("gulp-htmlmin");
 const newer = require("gulp-newer");
 const gulppug = require("gulp-pug");
+const browsersync = require("browser-sync").create();
 const del = require("del");
 
 const paths = {
@@ -49,6 +50,7 @@ function pug() {
     .pipe(gulppug())
     .pipe(htmlmin({ collapseWhitespace: true }))
     .pipe(gulp.dest(paths.pug.dest))
+    .pipe(browsersync.stream());
 }
 
 function pugblocks() {
@@ -56,6 +58,7 @@ function pugblocks() {
     .src([paths.pugmodule.modules, paths.pugmodule.components])
     .pipe(gulppug())
     .pipe(htmlmin({ collapseWhitespace: true }))
+    .pipe(browsersync.stream());
 }
 
 function styles() {
@@ -79,6 +82,7 @@ function styles() {
       })
     )
     .pipe(gulp.dest(paths.styles.dest))
+    .pipe(browsersync.stream());
 }
 
 function scripts() {
@@ -91,7 +95,8 @@ function scripts() {
     )
     .pipe(uglify())
     .pipe(concat("main.min.js"))
-    .pipe(gulp.dest(paths.scripts.dest));
+    .pipe(gulp.dest(paths.scripts.dest))
+    .pipe(browsersync.stream());
 }
 
 function img() {
@@ -107,6 +112,12 @@ function img() {
 }
 
 function watch() {
+  browsersync.init({
+    server: {
+      baseDir: "./dist/",
+    },
+  });
+  gulp.watch(paths.pug.src).on("change", browsersync.reload);
   gulp.watch(paths.pug.src, pug);
   gulp.watch(
     [paths.pugmodule.modules, paths.pugmodule.components],
@@ -131,3 +142,4 @@ exports.default = gulp.series(
   gulp.parallel(styles, scripts, img),
   watch
 );
+
