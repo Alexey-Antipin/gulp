@@ -24,9 +24,9 @@ const paths = {
   },
   styles: {
     src: [
-      "src/styles/**/*.sass",
       "src/styles/**/*.scss",
-      "src/styles/**/*.css",
+      "src/modules/**/*.scss",
+      "src/components/**/*.scss",
     ],
     dest: "dist/css/",
   },
@@ -118,10 +118,9 @@ function watch() {
     },
   });
   gulp.watch(paths.pug.src).on("change", browsersync.reload);
-  gulp.watch(paths.pug.src, pug);
   gulp.watch(
     [paths.pugmodule.modules, paths.pugmodule.components],
-    pugblocks
+    pug
   );
   gulp.watch(paths.styles.src, styles);
   gulp.watch(paths.scripts.src, scripts);
@@ -142,4 +141,3 @@ exports.default = gulp.series(
   gulp.parallel(styles, scripts, img),
   watch
 );
-
